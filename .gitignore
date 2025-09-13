@@ -27,3 +27,4 @@ terraform.rc
 
 # CLI configuration files
 .terraform.lock.hcl
+lambda_function.zip

@@ -15,3 +15,7 @@ variable "allowed_ssh_cidr" {}
 variable "proj_name" {
   default = "monitoring-demo"
 }
+
+variable "profile" {
+  default = "default"
+}
