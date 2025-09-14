@@ -8,14 +8,15 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high" {
   evaluation_periods  = 3   
   threshold           = 85
   comparison_operator = "GreaterThanOrEqualToThreshold"
-  alarm_actions       = [aws_sns_topic.alarms.arn]
+  alarm_actions       = [aws_lambda_function.remediate.arn]  # Direct Lambda invocation
   treat_missing_data  = "missing"
 
-  dimensions = {
-    host = "${aws_instance.app.private_dns}"
-    cpu  = "cpu-total"
-    # Project = "${var.proj_name}-instance"
-  }
+  # dimensions = {
+  #   Hostname = "${aws_instance.app.private_dns}"
+  #   cpu  = "cpu-total"
+  #   InstanceId = aws_instance.app.id
+  #   Project = "${var.proj_name}-instance"
+  # }
 
   tags = {
     Name = "${var.proj_name}-CloudWatchAlarm"

@@ -19,27 +19,21 @@ resource "aws_lambda_function" "remediate" {
 
   environment {
     variables = {
-      LOG_LEVEL = "INFO"
-      ISOLATION_SG = aws_security_group.isolation_sg.id
-      ISOLATION_RT = aws_route_table.isolation.id
+      LOG_LEVEL          = "INFO"
+      ISOLATION_SG       = aws_security_group.isolation_sg.id
+      ISOLATION_RT       = aws_route_table.isolation.id
       INVEST_PROFILE_ARN = aws_iam_instance_profile.invest_profile.arn
     }
   }
 }
 
-# Allow SNS (CloudWatch Alarm) to invoke Lambda
-resource "aws_lambda_permission" "allow_sns" {
-  statement_id  = "AllowExecutionFromSNS"
+# Allow CloudWatch Alarms to invoke Lambda
+resource "aws_lambda_permission" "allow_cloudwatch" {
+  statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.remediate.function_name
-  principal     = "sns.amazonaws.com"
-  source_arn    = aws_sns_topic.alarms.arn
-}
-
-resource "aws_sns_topic_subscription" "lambda_subscription" {
-  topic_arn = aws_sns_topic.alarms.arn
-  protocol  = "lambda"
-  endpoint  = aws_lambda_function.remediate.arn
+  principal     = "events.amazonaws.com"  # CloudWatch uses this principal for alarms
+  source_arn    = aws_cloudwatch_metric_alarm.cpu_high.arn  # Restrict to this alarm
 }
 
 # Allow EventBridge (GuardDuty) to invoke Lambda
