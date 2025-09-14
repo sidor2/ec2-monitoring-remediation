@@ -11,7 +11,7 @@ data "archive_file" "lambda_zip" {
 resource "aws_lambda_function" "remediate" {
   function_name = "${var.proj_name}-auto-response"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "lambda_function.handler"   # ✅ matches the .py filename
+  handler       = "lambda_function.handler"
   runtime       = "python3.12"
 
   filename         = data.archive_file.lambda_zip.output_path
@@ -20,14 +20,11 @@ resource "aws_lambda_function" "remediate" {
   environment {
     variables = {
       LOG_LEVEL = "INFO"
+      ISOLATION_SG = aws_security_group.isolation_sg.id
+      ISOLATION_RT = aws_route_table.isolation.id
+      INVEST_PROFILE_ARN = aws_iam_instance_profile.invest_profile.arn
     }
   }
-
-  # if inside a VPC
-  # vpc_config {
-  #   subnet_ids         = [aws_subnet.private.id]
-  #   security_group_ids = [aws_security_group.lambda_sg.id]
-  # }
 }
 
 # Allow SNS (CloudWatch Alarm) to invoke Lambda

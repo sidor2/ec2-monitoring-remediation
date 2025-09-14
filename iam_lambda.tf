@@ -23,9 +23,11 @@ resource "aws_iam_role_policy" "lambda_policy" {
       {
         Effect   = "Allow",
         Action   = [
-          "ec2:StopInstances",
           "ec2:DescribeInstances",
-          "ec2:ModifyInstanceAttribute"
+          "ec2:ModifyInstanceAttribute",
+          "ec2:AssociateIamInstanceProfile",
+          "ec2:DescribeRouteTables",
+          "ec2:ReplaceRouteTableAssociation"
         ],
         Resource = "*"
       },

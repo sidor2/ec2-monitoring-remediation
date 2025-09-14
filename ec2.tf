@@ -121,6 +121,6 @@ resource "aws_instance" "app" {
   EOF
 
   tags = {
-    Name = "monitoring-demo-instance"
+    Project = "${var.proj_name}-instance"
   }
 }

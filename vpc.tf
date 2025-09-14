@@ -21,6 +21,12 @@ resource "aws_route_table" "public" {
   }
 }
 
+resource "aws_route_table" "isolation" {
+  vpc_id = aws_vpc.main.id
+  # No routes for isolation
+  tags = { Name = "isolation-rt" }
+}
+
 resource "aws_route_table_association" "public_assoc" {
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
